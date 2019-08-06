@@ -1,4 +1,4 @@
-#include <iostream>
+#include <iostream>//hell  asaaoman
 #include <string>
 #include <vector>
 #include <fstream>
@@ -20,19 +20,7 @@ std::string ReadingFile(std::string file){//Считывает содержим�
 	std::string Line = "";
 	while(!fin.eof()){
 		getline(fin,str);
-
-		for(int i = 0; i<size(str); i++){ // Удаляет комментарии.
-			if(str[i] == '/'){
-				if(str[i-1] == '/'){
-					break;
-				}
-				continue;
-			}
-			Line+=str[i];
-		}
-
-		allText += Line + " ";
-		Line = "";
+		allText += str + "\n";
 	}
 	return allText;
  }
@@ -56,9 +44,24 @@ std::vector <std::string> split(std::string str){//разбивает строк
 	bool STRING = false;
 	bool CHARS = false;
 	bool COMMENT = false;
+	bool CHECK = false;
 	for (int i = 0;i<size(str);i++){
+		if (COMMENT){
+			if (str[i] != '\n'){
+				continue;
+			}
+			COMMENT = false;
+			continue;
+		}
+		if (CHECK){
+			if (str[i] == '/'){
+				COMMENT = true;
+			}
+			CHECK=false;
+			continue;
+		}
 		if ((str[i] == '+' || str[i] == '-' || str[i] == '(' 		//
-			|| str[i] == ')' || str[i] == '*' || str[i] == '/'		//
+			|| str[i] == ')' || str[i] == '*' 						//
 			|| str[i] == '#' || str[i] == '<' || str[i] == '>'		//
 			|| str[i] == '{' || str[i] == '}' || str[i] == ';'		// 
 			|| str[i] == ',' || str[i] == '=' || str[i] == ' '   	// Настройка.
@@ -78,11 +81,15 @@ std::vector <std::string> split(std::string str){//разбивает строк
 			safe = "";
 			continue;
 		}
+		else if(str[i] == '/' && !STRING && !CHARS){
+			CHECK = true;
+			continue;
+		}
 		else if(str[i] == '"' && !CHARS &&
 				(str[i-1] != '\\' || (str[i-1] == '\\' && str[i-2] == '\\'))){
 			if (size(strip(safe)) == 0){
 				safe += str[i];
-				Return.push_back(strip(safe));
+				Return.push_back(safe);
 				safe = "";
 			}
 			else{
@@ -90,11 +97,11 @@ std::vector <std::string> split(std::string str){//разбивает строк
 					Return.push_back(safe);
 				}
 				else{
-					Return.push_back(strip(safe));
+					Return.push_back(safe);
 				}
 				safe = "";
 				safe += str[i];
-				Return.push_back(strip(safe));
+				Return.push_back(safe);
 				safe = "";
 			}
 			STRING = !STRING;
@@ -104,7 +111,7 @@ std::vector <std::string> split(std::string str){//разбивает строк
 				(str[i-1] != '\\' || (str[i-1] == '\\' && str[i-2] == '\\'))){
 			if (size(strip(safe)) == 0){
 				safe += str[i];
-				Return.push_back(strip(safe));
+				Return.push_back(safe);
 				safe = "";
 			}
 			else{
@@ -112,11 +119,11 @@ std::vector <std::string> split(std::string str){//разбивает строк
 					Return.push_back(safe);
 				}
 				else{
-					Return.push_back(strip(safe));
+					Return.push_back(safe);
 				}
 				safe = "";
 				safe += str[i];
-				Return.push_back(strip(safe));
+				Return.push_back(safe);
 				safe = "";
 			}
 			CHARS = !CHARS;
@@ -156,5 +163,5 @@ std::vector <std::string> foreman(std::string file){ //функция-прора
 
 int main(){
 	std::vector <std::string> result = foreman("nameFile");// result - результат, nameFile - имя файла.
-	return 1;
+	return 0;
 }
