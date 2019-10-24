@@ -2,7 +2,9 @@
 #include <string>
 #include <vector>
 #include <fstream>
-int size(std::string str){//Узнать длину сроки(input:строка, output:длина строки).
+class LexicalAnalyzer
+{
+private:int size(std::string str){//Узнать длину сроки(input:строка, output:длина строки).
 	int i = 0;
 	while(true){
 		if (str[i] == '\0'){
@@ -155,13 +157,50 @@ std::vector <std::string> split(std::string str){//разбивает строк
 	return ReturnWithoutGap;
 }
 
-std::vector <std::string> foreman(std::string file){ //функция-прораб(input:имя файла, output:вектор строк из функции split).
+std::vector <std::string> EndChecker(std::vector <std::string> v){
+	std::vector <std::string> v2;
+	int str = 0;
+	for (int i = 0; i < v.size(); i++){
+		if(str && v[i] != "\"" && v[i] != "\'"){
+			if (v[i][v[i].size()-1] == '"' && v[i][v[i].size()-2] != '\\' || v[i][v[i].size()-1] == '\'' && v[i][v[i].size()-2] != '\\' ){
+				std::string s = "";
+				for(int j = 0; j<v[i].size()-1; j++){
+					s+=v[i][j];
+				}
+				v2.push_back(s);
+				s = v[i][v[i].size()-1];
+				v2.push_back(s);
+				continue;
+			}
+			v2.push_back(v[i]);
+			continue;
+		}
+		else if (v[i] == "\n" || v[i] == "\t" || v[i] == " "){
+			continue;
+		}
+		else if(v[i] == "\"" || v[i] == "\'"){
+			if(str){
+				str = 0;
+			}
+			else
+				str = 1;
+			v2.push_back(v[i]);
+			continue;
+
+		}
+		v2.push_back(strip(v[i]));
+	}
+	return v2;
+}
+public:
+	std::vector <std::string> foreman(std::string file){ //функция-прораб(input:имя файла, output:вектор строк из функции split).
 	std::vector <std::string> str;
 	str.push_back(ReadingFile(file));
-	return split(str[0]);
+	
+	return EndChecker(split(str[0]));
 }
+	
+};
 
-int main(){
-	std::vector <std::string> result = foreman("nameFile");// result - результат, nameFile - имя файла.
-	return 0;
-}
+
+
